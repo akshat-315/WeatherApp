@@ -42,4 +42,11 @@ public class LocationService {
         return locationRepository.save(locationInDb);
 
     }
+
+    public void trashLocation(String code) throws LocationNotFoundException {
+        if(!locationRepository.existsById(code)){
+            throw new LocationNotFoundException("Could not find location with the code: " + code);
+        }
+        locationRepository.trashByCode(code);
+    }
 }

@@ -54,4 +54,14 @@ public class LocationRepositoryTests {
         assertThat(location).isNotNull();
     }
 
+    @Test
+    public void testTrashSuccess(){
+        String code = "NYC_AMA";
+
+        locationRepository.trashByCode(code);
+        Location location = locationRepository.findLocationByCode(code);
+
+        assertThat(location).isNull();
+    }
+
 }

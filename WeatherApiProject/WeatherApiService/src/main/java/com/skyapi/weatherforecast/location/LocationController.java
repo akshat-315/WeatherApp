@@ -54,4 +54,14 @@ public class LocationController {
         }
     }
 
+    @DeleteMapping("/{code}")
+    public ResponseEntity<?> trashLocation(@PathVariable String code){
+        try{
+            locationService.trashLocation(code);
+            return ResponseEntity.noContent().build();
+        }catch(LocationNotFoundException e){
+            return ResponseEntity.notFound().build();
+        }
+    }
+
 }
