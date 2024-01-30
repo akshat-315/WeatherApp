@@ -24,4 +24,22 @@ public class LocationService {
         return locationRepository.findLocationByCode(code);
     }
 
+    public Location updateLocation(Location locationRequest) throws LocationNotFoundException {
+        String code = locationRequest.getCode();
+
+        Location locationInDb = locationRepository.findLocationByCode(code);
+
+        if(locationInDb == null){
+            throw new LocationNotFoundException("Could not find the location with the code: " + code);
+        }
+
+        locationInDb.setCityName(locationRequest.getCityName());
+        locationInDb.setRegionName(locationRequest.getRegionName());
+        locationInDb.setCountryName(locationRequest.getCountryName());
+        locationInDb.setCountryCode(locationRequest.getCountryCode());
+        locationInDb.setEnabled(locationRequest.isEnabled());
+
+        return locationRepository.save(locationInDb);
+
+    }
 }

@@ -3,6 +3,7 @@ package com.skyapi.weatherforecast;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.skyapi.weatherforecast.common.Location;
 import com.skyapi.weatherforecast.location.LocationController;
+import com.skyapi.weatherforecast.location.LocationNotFoundException;
 import com.skyapi.weatherforecast.location.LocationService;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
@@ -15,11 +16,10 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 
 @WebMvcTest(LocationController.class)
 public class LocationApiControllerTests {
@@ -138,6 +138,59 @@ public class LocationApiControllerTests {
         mockMvc.perform(get(requestURI))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType("application/json"))
+                .andDo(print());
+    }
+
+    @Test
+    public void testUpdateShouldReturn404NotFound() throws LocationNotFoundException, Exception {
+        Location location = new Location();
+        location.setCode("ABCDEF");
+        location.setCityName("New York City");
+        location.setRegionName("New York");
+        location.setCountryCode("US");
+        location.setCountryName("USA");
+
+        Mockito.when(locationService.updateLocation(location)).thenThrow(new LocationNotFoundException("Location not found"));
+
+        String bodyContent = objectMapper.writeValueAsString(location);
+
+        mockMvc.perform(put(END_POINT_PATH).contentType("application/json").content(bodyContent))
+                .andExpect(status().isNotFound())
+                .andDo(print());
+    }
+
+    @Test
+    public void testUpdateShouldReturn400BadRequest() throws Exception, LocationNotFoundException {
+        Location location = new Location();
+        location.setCityName("New York City");
+        location.setRegionName("New York");
+        location.setCountryCode("US");
+        location.setCountryName("USA");
+
+        Mockito.when(locationService.updateLocation(location)).thenThrow(new LocationNotFoundException("Location not found"));
+
+        String bodyContent = objectMapper.writeValueAsString(location);
+
+        mockMvc.perform(put(END_POINT_PATH).contentType("application/json").content(bodyContent))
+                .andExpect(status().isBadRequest())
+                .andDo(print());
+    }
+
+    @Test
+    public void testUpdateShouldReturn200OK() throws Exception, LocationNotFoundException {
+        Location location = new Location();
+        location.setCode("NYC_USA");
+        location.setCityName("New York City");
+        location.setRegionName("New York");
+        location.setCountryCode("US");
+        location.setCountryName("USA");
+
+        Mockito.when(locationService.updateLocation(location)).thenThrow(new LocationNotFoundException("Location not found"));
+
+        String bodyContent = objectMapper.writeValueAsString(location);
+
+        mockMvc.perform(put(END_POINT_PATH).contentType("application/json").content(bodyContent))
+                .andExpect(status().isOk())
                 .andDo(print());
     }
 }
