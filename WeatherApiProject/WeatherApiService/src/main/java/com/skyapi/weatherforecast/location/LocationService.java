@@ -4,6 +4,8 @@ import com.skyapi.weatherforecast.common.Location;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Service
 public class LocationService {
 
@@ -12,6 +14,10 @@ public class LocationService {
 
     public Location add(Location location){
         return locationRepository.save(location);
+    }
+
+    public List<Location> list(){
+        return locationRepository.findUntrashed();
     }
 
 }

@@ -11,6 +11,11 @@ import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.web.servlet.MockMvc;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -56,6 +61,44 @@ public class LocationApiControllerTests {
 
         mockMvc.perform(post(END_POINT_PATH).contentType("application/json").content(bodyContent))
                 .andExpect(status().isCreated())
+                .andExpect(content().contentType("application/json"))
+                .andDo(print());
+    }
+
+    @Test
+    public void testListShouldReturn204NoContent() throws Exception {
+        Mockito.when(locationService.list()).thenReturn(Collections.emptyList());
+
+        mockMvc.perform(get(END_POINT_PATH))
+                .andExpect(status().isNoContent())
+                .andDo(print());
+    }
+
+    @Test
+    public void testListShouldReturn201OK() throws Exception {
+        List<Location> locations = new ArrayList<>();
+
+        Location location1 = new Location();
+        location1.setCode("NYC_USA");
+        location1.setCityName("New York City");
+        location1.setRegionName("New York");
+        location1.setCountryCode("US");
+        location1.setCountryName("USA");
+
+        Location location2 = new Location();
+        location2.setCode("DEL_IN");
+        location2.setCityName("New Delhi");
+        location2.setRegionName("Delhi");
+        location2.setCountryCode("IN");
+        location2.setCountryName("INDIA");
+
+        locations.add(location1);
+        locations.add(location2);
+
+        Mockito.when(locationService.list()).thenReturn(locations);
+
+        mockMvc.perform(get(END_POINT_PATH))
+                .andExpect(status().isOk())
                 .andExpect(content().contentType("application/json"))
                 .andDo(print());
     }
