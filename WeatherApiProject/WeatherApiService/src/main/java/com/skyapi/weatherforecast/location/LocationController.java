@@ -34,4 +34,14 @@ public class LocationController {
         return ResponseEntity.ok(locations);
     }
 
+    @GetMapping("/{code}")
+    public ResponseEntity<?> getLocationByCode(@PathVariable("code") String code){
+        Location location = locationService.getByCode(code);
+
+        if(location == null) {
+            return ResponseEntity.notFound().build();
+        }
+        return ResponseEntity.ok(location);
+    }
+
 }

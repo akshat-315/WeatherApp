@@ -103,4 +103,41 @@ public class LocationApiControllerTests {
                 .andDo(print());
     }
 
+    @Test
+    public void testGetShouldReturn405MethodNotAllowed() throws Exception {
+        String requestURI = END_POINT_PATH + "/ABCDEF";
+
+        mockMvc.perform(post(requestURI))
+                .andExpect(status().isMethodNotAllowed())
+                .andDo(print());
+    }
+
+    @Test
+    public void testGetShouldReturn404NotFound() throws Exception {
+        String requestURI = END_POINT_PATH + "/ABCDEF";
+
+        mockMvc.perform(get(requestURI))
+                .andExpect(status().isNotFound())
+                .andDo(print());
+    }
+
+    @Test
+    public void testGetShouldReturn200OK() throws Exception {
+        String code = "NYC_USA";
+        String requestURI = END_POINT_PATH + "/" + code;
+
+        Location location = new Location();
+        location.setCode("NYC_USA");
+        location.setCityName("New York City");
+        location.setRegionName("New York");
+        location.setCountryCode("US");
+        location.setCountryName("USA");
+
+        Mockito.when(locationService.getByCode(code)).thenReturn(location);
+
+        mockMvc.perform(get(requestURI))
+                .andExpect(status().isOk())
+                .andExpect(content().contentType("application/json"))
+                .andDo(print());
+    }
 }
