@@ -8,6 +8,8 @@ import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Size;
+import org.hibernate.validator.constraints.Length;
 
 import java.util.Objects;
 
@@ -17,27 +19,32 @@ public class Location {
 
     @Id
     @Column(length = 12, nullable = false, unique = true)
-    @NotBlank
+    @Size(max = 12)
+    @NotNull(message = "Location code cannot be left blank")
     private String code;
 
     @Column(length = 128, nullable = false)
+    @Size(max = 128)
     @JsonProperty("city_name")
-    @NotBlank
+    @NotNull(message = "City Name cannot be left blank")
     private String cityName;
 
     @Column(length = 128)
+    @Size(max = 128)
     @JsonProperty("region_name")
     @NotNull
     private String regionName;
 
     @Column(length = 64, nullable = false)
+    @Size(max = 64)
     @JsonProperty("country_name")
-    @NotBlank
+    @NotNull(message = "Country Name cannot be left blank")
     private String countryName;
 
     @Column(length = 2, nullable = false)
+    @Size(max = 2)
     @JsonProperty("country_code")
-    @NotBlank
+    @NotNull(message = "Country code cannot be left blank")
     private String countryCode;
     private boolean enabled;
 
